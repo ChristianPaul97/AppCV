@@ -1,0 +1,65 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'ec.edu.ups.appcv'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "ec.edu.ups.appcv"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    //Add an opcion TF Lite model file
+    aaptOptions{
+        noCompress "tflite"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.18.1'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation project(path: ':openCV')
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    //Declaramos dependencias Tensorflow Lite
+    ////Paso 2
+    //implementation 'org.tensorflow:tensorflow-lite:2.3.0'
+    //implementation 'org.tensorflow:tensorflow-lite-support:0.1.0-rcl'
+    //implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+
+    //implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.0'
+    ///// Import the GPU delegate plugin Library for GPU inference
+    //implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0'
+    //implementation 'org.tensorflow:tensorflow-lite-gpu:2.9.0'
+
+}
