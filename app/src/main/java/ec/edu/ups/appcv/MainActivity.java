@@ -60,11 +60,13 @@ public class MainActivity extends CameraActivity  {
     private JavaCameraView mCameraView;
     private int mCameraId = CameraBridgeViewBase.CAMERA_ID_BACK;
     CameraBridgeViewBase camaraBridgeViewBase;
+
+    private imageClassification imageClassification;
     private boolean mIsCameraColor;
     //Camara Flip boton
     private ImageView flip_camara;
     /////
- private String list;
+    private String list;
     private int mCamaraId=0;
     private TextView mFpsTextView;
 
@@ -150,6 +152,16 @@ public class MainActivity extends CameraActivity  {
 
         camaraBridgeViewBase = findViewById(R.id.camaraView);
         flip_camara=findViewById(R.id.flip_camara);
+
+        try {
+            int inputSize= 256;
+            imageClassification=new imageClassification(getAssets(), "model_AppCV.tflite", inputSize);
+            Log.d("CamaraActivity", "Model is loaded");
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
         flip_camara.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -197,6 +209,7 @@ public class MainActivity extends CameraActivity  {
     resoluArray.add("DetectorMovimiento");
     resoluArray.add("DetectorCirculo");
     resoluArray.add("DetectarBorde");
+    resoluArray.add("Cancer");
 
 
     filtro_icon= findViewById(R.id.filtro_icon);
@@ -355,6 +368,7 @@ set_filtro.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onCameraViewStarted(int width, int height) {
+
             }
 
             @Override
@@ -367,6 +381,9 @@ set_filtro.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 lastFrame = inputFrame.rgba();
                 lFrame = inputFrame.gray();
+
+
+
                 if (mCameraId==1) {
                     Core.flip(lastFrame, lastFrame,-1);
                     Core.flip(lFrame, lFrame,-1);
@@ -418,7 +435,9 @@ set_filtro.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     detectarBordesLaplaciano(bit,bit1);
                     Utils.bitmapToMat(bit1,clon);
                     lastFrame =clon.clone();
-                }
+                }else if (fill=="Cancer"){
+                        lastFrame= imageClassification.recognizeImage(lastFrame);
+                    }
 
                 take_imagen= take_icon_funcion_gray(take_imagen,lastFrame);
 
